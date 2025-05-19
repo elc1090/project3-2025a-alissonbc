@@ -16,4 +16,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-export { db, auth };
+function mostrarLoading() {
+    document.getElementById("loadingOverlay").classList.remove("d-none");
+}
+
+function esconderLoading() {
+    document.getElementById("loadingOverlay").classList.add("d-none");
+}
+
+export { db, auth, mostrarLoading, esconderLoading };

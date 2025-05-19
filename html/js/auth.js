@@ -1,9 +1,9 @@
-import { auth } from './firebase.js';
+import { auth, mostrarLoading, esconderLoading } from './firebase.js';
 import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-auth.js";
 
 // Elementos
@@ -19,60 +19,68 @@ const userInfo = document.getElementById("userInfo");
 
 // Mostrar e ocultar card
 btnMostrarLogin.addEventListener("click", () => {
-  loginCardContainer.style.display = "flex";
-  loginCardContainer.classList.remove("d-none");
-  
+    loginCardContainer.style.display = "flex";
+    loginCardContainer.classList.remove("d-none");
 });
 
 btnFecharLogin.addEventListener("click", () => {
-  loginCardContainer.classList.add("d-none");
+    loginCardContainer.classList.add("d-none");
 });
 
 // Registro
 btnRegistrar.addEventListener("click", async () => {
-  try {
-    await createUserWithEmailAndPassword(auth, emailEl.value, senhaEl.value);
-    loginCardContainer.classList.add("d-none");
-  } catch (e) {
-    alert("Erro ao registrar: " + e.message);
-  }
+    mostrarLoading();
+    try {
+        await createUserWithEmailAndPassword(auth, emailEl.value, senhaEl.value);
+        loginCardContainer.classList.add("d-none");
+    } catch (e) {
+        alert("Erro ao registrar: " + e.message);
+    } finally {
+        esconderLoading();
+    }
 });
 
 // Login
 btnLogin.addEventListener("click", async () => {
-  try {
-    await signInWithEmailAndPassword(auth, emailEl.value, senhaEl.value);
-    loginCardContainer.classList.add("d-none");
-  } catch (e) {
-    alert("Erro ao logar: " + e.message);
-  }
+    mostrarLoading();
+    try {
+        await signInWithEmailAndPassword(auth, emailEl.value, senhaEl.value);
+        loginCardContainer.classList.add("d-none");
+    } catch (e) {
+        alert("Erro ao logar: " + e.message);
+    } finally {
+        esconderLoading();
+    }
 });
 
 document.getElementById("btnLogout").addEventListener("click", async () => {
+    mostrarLoading();
     try {
       await signOut(auth);
     } catch (e) {
       console.error("Erro ao deslogar:", e);
+    } finally {
+        esconderLoading();
     }
-  });
+});
 
 // Detecta mudanças de login
 onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log("Usuário logado:", user.email);
+    if (user) {
+        console.log("Usuário logado:", user.email);
 
-    loginCardContainer.classList.add("d-none");
-    btnMostrarLogin.classList.add("d-none");
-    btnLogout.classList.remove("d-none");
-    userInfo.classList.remove("d-none");
-    userInfo.textContent = user.email;
-    
-  } else {
-    console.log("Usuário deslogado.");
+        loginCardContainer.classList.add("d-none");
+        btnMostrarLogin.classList.add("d-none");
+        btnLogout.classList.remove("d-none");
+        userInfo.classList.remove("d-none");
+        userInfo.textContent = user.email;
+        
+    } else {
+        console.log("Usuário deslogado.");
 
-    btnMostrarLogin.classList.remove("d-none");
-    btnLogout.classList.add("d-none");
-    userInfo.classList.add("d-none");
-    userInfo.textContent = "";
-  }
+        btnMostrarLogin.classList.remove("d-none");
+        btnLogout.classList.add("d-none");
+        userInfo.classList.add("d-none");
+        userInfo.textContent = "";
+    }
 });
