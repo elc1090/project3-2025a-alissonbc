@@ -26,4 +26,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
+}
+
+.review-card {
+    height: 350px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.review-descricao {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Limita a 5 linhas */
+    -webkit-box-orient: vertical;
+}

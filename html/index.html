@@ -19,13 +19,6 @@
         <button id="btnLogout" class="btn btn-secondary d-none">Logout</button>
     </div>
     
-    <!-- Conteúdo principal (ex: reviews públicas futuramente) -->
-    <div class="container mt-5">
-        <h3 class="text-center mb-4">Review de filmes</h3>
-        <textarea id="markdown"></textarea>
-        <button id="btnSalvar">Salvar</button>
-    </div>
-
     <!-- Card de Login/Registro sobreposto -->
     <div id="loginCardContainer" class="d-flex d-none">
         <div class="card shadow-lg" style="max-width: 400px; width: 100%;">
@@ -101,6 +94,12 @@
         <button id="btnSalvarReview" class="btn btn-success">Salvar</button>
         </div>
     </div>
+    </div>
+
+    <!-- Mini card da review de cada filme -->
+    <div class="container mt-4">
+        <div id="reviewsContainer" class="row g-4">
+        </div>
     </div>
 
     <div id="loadingOverlay" class="d-none">
