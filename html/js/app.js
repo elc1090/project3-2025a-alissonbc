@@ -98,7 +98,7 @@ function exibirReviewsPublicas(reviews) {
         <img src="${imagem}" class="card-img-top" alt="Capa do filme" style="height: 200px; object-fit: cover;" onerror="this.onerror=null;this.src='img/pipocaGPT.png';">
         <div class="card-body d-flex flex-column">
         <h5 class="card-title text-truncate" title="${review.title}">${review.title}</h5>
-        <p class="card-text review-descricao">${review.review}</p>
+        <p class="card-text review-descricao">${review.review.replace(/\n/g, "<br>")}</p>
         </div>
     `;
 
