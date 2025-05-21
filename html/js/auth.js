@@ -7,7 +7,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-auth.js";
 
 // Elementos
-const emailEl = document.getElementById("email");
+const username = document.getElementById("usuario");
 const senhaEl = document.getElementById("senha");
 const btnRegistrar = document.getElementById("btnRegistrar");
 const btnLogin = document.getElementById("btnLogin");
@@ -27,14 +27,30 @@ btnFecharLogin.addEventListener("click", () => {
     loginCardContainer.classList.add("d-none");
 });
 
+function formatarEmailFake(usuario) {
+    return `${usuario.toLowerCase()}@emailfalso.fal`;
+}
+
 // Registro
 btnRegistrar.addEventListener("click", async () => {
+
+    if (username.value.includes("@")) {
+        alert("Não use e-mail. Digite apenas um nome de usuário.");
+        return;
+    }
+
     mostrarLoading();
     try {
-        await createUserWithEmailAndPassword(auth, emailEl.value, senhaEl.value);
+        await createUserWithEmailAndPassword(auth, formatarEmailFake(username.value), senhaEl.value);
         loginCardContainer.classList.add("d-none");
     } catch (e) {
-        alert("Erro ao registrar: " + e.message);
+        if (e.code === "auth/email-already-in-use") {
+            alert(`O nome de usuário "${username.value}" já está em uso. Escolha outro.`);
+        } else if (e.code === "auth/weak-password") {
+            alert("A senha deve ter pelo menos 6 caracteres.");
+        } else {
+            alert("Erro ao registrar: " + e.message);
+        }
     } finally {
         esconderLoading();
     }
@@ -42,12 +58,26 @@ btnRegistrar.addEventListener("click", async () => {
 
 // Login
 btnLogin.addEventListener("click", async () => {
+
+    if (username.value.includes("@")) {
+        alert("Não use e-mail. Digite apenas um nome de usuário.");
+        return;
+    }
+
     mostrarLoading();
     try {
-        await signInWithEmailAndPassword(auth, emailEl.value, senhaEl.value);
+        await signInWithEmailAndPassword(auth, formatarEmailFake(username.value), senhaEl.value);
         loginCardContainer.classList.add("d-none");
     } catch (e) {
-        alert("Erro ao logar: " + e.message);
+        if (e.code === "auth/user-not-found") {
+            alert(`O usuário "${username.value}" não foi encontrado.`);
+        } else if (e.code === "auth/wrong-password") {
+            alert("Senha incorreta. Tente novamente.");
+        } else if (e.code === "auth/invalid-email") {
+            alert("Nome de usuário inválido.");
+        } else {
+            alert("Erro ao fazer login: " + e.message);
+        }
     } finally {
         esconderLoading();
     }
@@ -73,7 +103,7 @@ onAuthStateChanged(auth, (user) => {
         btnMostrarLogin.classList.add("d-none");
         btnLogout.classList.remove("d-none");
         userInfo.classList.remove("d-none");
-        userInfo.textContent = user.email;
+        userInfo.textContent = user.email.split("@")[0];
         
     } else {
         console.log("Usuário deslogado.");

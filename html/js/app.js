@@ -71,6 +71,7 @@ btnSalvarReview.addEventListener("click", async () => {
                 review: textoDaReview,
                 isPublic: isPublic,
                 userId: currentUser.uid,
+                username: currentUser.email.split("@")[0],
                 createdAt: serverTimestamp()
             });
             alert("Review salva!");
@@ -137,7 +138,7 @@ function abrirReviewDetalhada(review) {
     const data = review.createdAt?.toDate?.() || new Date();
     const dataFormatada = data.toLocaleDateString("pt-BR");
 
-    document.getElementById("reviewDetalhadaAutorData").textContent = `Publicado por ${review.autor || "Anônimo"} em ${dataFormatada}`;
+    document.getElementById("reviewDetalhadaAutorData").textContent = `Publicado por ${review.username || "Desconhecido"} em ${dataFormatada}`;
 
     reviewDetalhadaContainer.classList.remove("d-none");
 }
