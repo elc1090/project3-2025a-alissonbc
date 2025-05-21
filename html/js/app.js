@@ -13,6 +13,8 @@ const addReviewContainer = document.getElementById("addReviewContainer");
 const btnMostrarAddReview = document.getElementById("btnMostrarAddReview");
 const btnCancelarAddReview = document.getElementById("btnCancelarAddReview");
 const btnSalvarReview = document.getElementById("btnSalvarReview");
+const btnFecharDetalhada = document.getElementById("btnFecharDetalhada");
+const reviewDetalhadaContainer = document.getElementById("reviewDetalhadaContainer");
 
 btnMostrarAddReview.addEventListener("click", () => {
     addReviewContainer.classList.remove("d-none");
@@ -20,6 +22,25 @@ btnMostrarAddReview.addEventListener("click", () => {
 
 btnCancelarAddReview.addEventListener("click", () => {
     addReviewContainer.classList.add("d-none");
+});
+
+btnFecharDetalhada.addEventListener("click", () => {
+    reviewDetalhadaContainer.classList.add("d-none");
+});
+
+// Fechar review detalhada com ESC
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+        reviewDetalhadaContainer.classList.add("d-none");
+    }
+});
+
+// Fechar review detalhada ao clicar fora do card
+reviewDetalhadaContainer.addEventListener("click", function (event) {
+    const card = document.getElementById("reviewDetalhadaCard");
+    if (!card.contains(event.target)) {
+        reviewDetalhadaContainer.classList.add("d-none");
+    }
 });
 
 btnSalvarReview.addEventListener("click", async () => {
@@ -106,9 +127,19 @@ function exibirReviewsPublicas(reviews) {
     container.appendChild(col); 
     });
 }
-  
-function abrirReviewDetalhada(review){
-    alert("O card de review completa abriria agora");
+
+function abrirReviewDetalhada(review) {
+    document.getElementById("reviewDetalhadaTitulo").textContent = review.title;
+    document.getElementById("reviewDetalhadaImagem").src = review.image?.trim() !== "" ? review.image : "img/pipocaGPT.png";
+
+    document.getElementById("reviewDetalhadaTexto").textContent = review.review;
+
+    const data = review.createdAt?.toDate?.() || new Date();
+    const dataFormatada = data.toLocaleDateString("pt-BR");
+
+    document.getElementById("reviewDetalhadaAutorData").textContent = `Publicado por ${review.autor || "Anônimo"} em ${dataFormatada}`;
+
+    reviewDetalhadaContainer.classList.remove("d-none");
 }
 
 async function carregarReviewsPublicas() {

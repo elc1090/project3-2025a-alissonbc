@@ -42,3 +42,8 @@
     -webkit-line-clamp: 4; /* Limita a 5 linhas */
     -webkit-box-orient: vertical;
 }
+
+#reviewDetalhadaContainer .card {
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+}
