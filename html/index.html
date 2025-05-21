@@ -22,25 +22,25 @@
     <!-- Card de Login/Registro sobreposto -->
     <div id="loginCardContainer" class="d-flex d-none">
         <div class="card shadow-lg" style="max-width: 400px; width: 100%;">
-        <div class="card-body">
-            <h4 class="card-title text-center mb-4">Login / Registro</h4>
+            <div class="card-body">
+                <h4 class="card-title text-center mb-4">Login / Registro</h4>
 
-            <div class="mb-3">
-            <label for="email" class="form-label">E-mail</label>
-            <input type="email" class="form-control" id="email" placeholder="seu@email.com">
-            </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input type="email" class="form-control" id="email" placeholder="seu@email.com">
+                </div>
 
-            <div class="mb-3">
-            <label for="senha" class="form-label">Senha</label>
-            <input type="password" class="form-control" id="senha" placeholder="Senha">
-            </div>
+                <div class="mb-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senha" placeholder="Senha">
+                </div>
 
-            <div class="d-grid gap-2">
-            <button id="btnRegistrar" class="btn btn-outline-primary">Registrar</button>
-            <button id="btnLogin" class="btn btn-primary">Login</button>
-            <button id="btnFecharLogin" class="btn btn-secondary mt-2">Fechar</button>
+                <div class="d-grid gap-2">
+                    <button id="btnRegistrar" class="btn btn-outline-primary">Registrar</button>
+                    <button id="btnLogin" class="btn btn-primary">Login</button>
+                    <button id="btnFecharLogin" class="btn btn-secondary mt-2">Fechar</button>
+                </div>
             </div>
-        </div>
         </div>
     </div>
 
@@ -48,52 +48,52 @@
 
     <!-- Card para adicionar Review de filme -->
     <div id="addReviewContainer" class="d-none">
-    <div class="card p-4" style="width: 400px; max-width: 90%;">
-        <h5 class="card-title mb-3">Adicionar Review</h5>
-        
-        <div class="mb-3">
-        <label for="inputTitulo" class="form-label">Nome do filme</label>
-        <input type="text" class="form-control" id="inputTitulo" placeholder="Digite o título">
-        </div>
-        
-        <div class="mb-3">
-        <label for="inputImagem" class="form-label">URL da imagem</label>
-        <input type="url" class="form-control" id="inputImagem" placeholder="https://">
-        </div>
-        
-        <div class="mb-3">
-        <label for="selectNota" class="form-label">Nota</label>
-        <select class="form-select" id="selectNota">
-            <!-- gera opções de 0 a 10 -->
-            <option value="" selected disabled>Escolha a nota</option>
-            <!-- opções serão preenchidas via JS -->
-        </select>
-        </div>
-        
-        <div class="mb-3">
-        <label for="textareaReview" class="form-label">Review</label>
-        <textarea class="form-control" id="textareaReview" rows="4" placeholder="Escreva sua review"></textarea>
-        </div>
-        
-        <div class="mb-3">
-            <label class="form-label d-block">Visibilidade</label>
+        <div class="card p-4" style="width: 400px; max-width: 90%;">
+            <h5 class="card-title mb-3">Adicionar Review</h5>
             
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="visibilidade" id="visibilidadePrivado" value="false" checked>
-              <label class="form-check-label" for="visibilidadePrivado">Privado</label>
+            <div class="mb-3">
+                <label for="inputTitulo" class="form-label">Nome do filme</label>
+                <input type="text" class="form-control" id="inputTitulo" placeholder="Digite o título">
             </div>
             
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="visibilidade" id="visibilidadePublico" value="true">
-              <label class="form-check-label" for="visibilidadePublico">Público</label>
+            <div class="mb-3">
+                <label for="inputImagem" class="form-label">URL da imagem</label>
+                <input type="url" class="form-control" id="inputImagem" placeholder="https://">
             </div>
-          </div>
-        
-        <div class="d-flex justify-content-between">
-        <button id="btnCancelarAddReview" class="btn btn-secondary">Cancelar</button>
-        <button id="btnSalvarReview" class="btn btn-success">Salvar</button>
+            
+            <div class="mb-3">
+                <label for="selectNota" class="form-label">Nota</label>
+                <select class="form-select" id="selectNota">
+                    <!-- gera opções de 0 a 10 -->
+                    <option value="" selected disabled>Escolha a nota</option>
+                    <!-- opções serão preenchidas via JS -->
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="textareaReview" class="form-label">Review</label>
+                <textarea class="form-control" id="textareaReview" rows="4" placeholder="Escreva sua review"></textarea>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label d-block">Visibilidade</label>
+                
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="visibilidade" id="visibilidadePrivado" value="false" checked>
+                    <label class="form-check-label" for="visibilidadePrivado">Privado</label>
+                </div>
+                
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="visibilidade" id="visibilidadePublico" value="true">
+                    <label class="form-check-label" for="visibilidadePublico">Público</label>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <button id="btnCancelarAddReview" class="btn btn-secondary">Cancelar</button>
+                <button id="btnSalvarReview" class="btn btn-success">Salvar</button>
+            </div>
         </div>
-    </div>
     </div>
 
     <!-- Mini card da review de cada filme -->
@@ -104,7 +104,7 @@
 
     <div id="loadingOverlay" class="d-none">
         <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
-          <span class="visually-hidden">Carregando...</span>
+            <span class="visually-hidden">Carregando...</span>
         </div>
     </div>
 
