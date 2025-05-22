@@ -11,14 +11,21 @@ for(let i = 0; i <= 10; i++) {
 
 const addReviewContainer = document.getElementById("addReviewContainer");
 const btnMostrarAddReview = document.getElementById("btnMostrarAddReview");
+const btnMostrarReviewPublicas = document.getElementById("btnMostrarReviewPublicas");
 const btnCancelarAddReview = document.getElementById("btnCancelarAddReview");
 const btnSalvarReview = document.getElementById("btnSalvarReview");
 const btnFecharDetalhada = document.getElementById("btnFecharDetalhada");
 const reviewDetalhadaContainer = document.getElementById("reviewDetalhadaContainer");
 
+const userInfo = document.getElementById("userInfo");
+const reviewType = document.getElementById("reviewType");
+
 btnMostrarAddReview.addEventListener("click", () => {
     addReviewContainer.classList.remove("d-none");
 });
+
+btnMostrarReviewPublicas.addEventListener("click", () => carregarReviewsPublicas());
+
 
 btnCancelarAddReview.addEventListener("click", () => {
     addReviewContainer.classList.add("d-none");
@@ -100,8 +107,8 @@ btnSalvarReview.addEventListener("click", async () => {
     }
 });
 
-// Reviews publicas
-function exibirReviewsPublicas(reviews) {
+// Exibe as reviews
+function exibirReviews(reviews) {
     const container = document.getElementById("reviewsContainer");
     container.innerHTML = ""; // limpa antes de renderizar
 
@@ -154,12 +161,42 @@ async function carregarReviewsPublicas() {
             reviews.push({ id: doc.id, ...doc.data() });
         });
 
-        exibirReviewsPublicas(reviews);
+        exibirReviews(reviews);
     } catch (e) {
         console.error("Erro ao carregar reviews públicas:", e);
         alert("Erro ao carregar reviews públicas.");
     } finally {
         esconderLoading();
+        reviewType.textContent = "Reviews Públicas";
+    }
+}
+
+userInfo.addEventListener("click", () => carregarReviewsUser());
+
+async function carregarReviewsUser() {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+        alert("Você precisa estar logado para ver suas reviews.");
+        return;
+    }
+
+    mostrarLoading();
+    try {
+        const q = query(collection(db, "reviews"), where("userId", "==", currentUser.uid));
+        const querySnapshot = await getDocs(q);
+
+        const reviews = [];
+        querySnapshot.forEach((doc) => {
+            reviews.push({ id: doc.id, ...doc.data() });
+        });
+
+        exibirReviews(reviews);
+    } catch (e) {
+        console.error("Erro ao carregar reviews do usuário:", e);
+        alert("Erro ao carregar reviews do usuário.");
+    } finally {
+        esconderLoading();
+        reviewType.textContent = "Suas Reviews";
     }
 }
 
