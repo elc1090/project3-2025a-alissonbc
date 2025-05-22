@@ -10,14 +10,21 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    
-    
-    <!-- Botão para exibir o login -->
-    <div class="container mt-3 text-end">
-        <button id="btnMostrarLogin" class="btn btn-outline-primary">Entrar / Registrar</button>
-        <span id="userInfo" class="ms-2 d-none"></span>
-        <button id="btnLogout" class="btn btn-secondary d-none">Logout</button>
+
+    <!-- Header -->
+    <div class="header_section_top">
+
+        <button id="btnMostrarAddReview" class="btn btn-primary">Adicionar Review</button>
+
+        <!-- Botão para exibir o login -->
+        <div class="user">
+            <button id="btnMostrarLogin" class="btn btn-outline-primary">Entrar / Registrar</button>
+            <span id="userInfo" class="ms-2 d-none"></span>
+            <button id="btnLogout" class="btn btn-secondary d-none">Logout</button>
+        </div>
+
     </div>
+    
     
     <!-- Card de Login/Registro sobreposto -->
     <div id="loginCardContainer" class="d-flex d-none">
@@ -43,8 +50,6 @@
             </div>
         </div>
     </div>
-
-    <button id="btnMostrarAddReview" class="btn btn-primary mb-3">Adicionar Review</button>
 
     <!-- Card para adicionar Review de filme -->
     <div id="addReviewContainer" class="d-none">

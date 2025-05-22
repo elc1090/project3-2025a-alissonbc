@@ -104,6 +104,7 @@ onAuthStateChanged(auth, (user) => {
         btnLogout.classList.remove("d-none");
         userInfo.classList.remove("d-none");
         userInfo.textContent = user.email.split("@")[0];
+        userInfo.style.color = "white";
         
     } else {
         console.log("Usuário deslogado.");
