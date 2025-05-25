@@ -145,7 +145,16 @@ function abrirReviewDetalhada(review) {
     const data = review.createdAt?.toDate?.() || new Date();
     const dataFormatada = data.toLocaleDateString("pt-BR");
 
-    document.getElementById("reviewDetalhadaAutorData").textContent = `Publicado por ${review.username || "Desconhecido"} em ${dataFormatada}`;
+    const reviewDetalhadaAutorData = document.getElementById("reviewDetalhadaAutorData");
+
+    if (review.username) {
+        reviewDetalhadaAutorData.innerHTML = `Publicado por <span id="autorReview" style="text-decoration: underline; cursor: pointer;">${review.username}</span> em ${dataFormatada}`;
+        
+        document.getElementById("autorReview").addEventListener("click", () => carregarReviewsUser(review.username));
+    }
+    else {
+        reviewDetalhadaAutorData.textContent = `Publicado por Desconhecido em ${dataFormatada}`;
+    }
 
     reviewDetalhadaContainer.classList.remove("d-none");
 }
@@ -173,18 +182,23 @@ async function carregarReviewsPublicas() {
 
 userInfo.addEventListener("click", () => carregarReviewsUser());
 
-async function carregarReviewsUser() {
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
-        alert("Você precisa estar logado para ver suas reviews.");
-        return;
-    }
-
+async function carregarReviewsUser(user = null) {
     mostrarLoading();
     try {
-        const q = query(collection(db, "reviews"), where("userId", "==", currentUser.uid));
-        const querySnapshot = await getDocs(q);
+        let q;
 
+        if (user === null) {
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+                alert("Você precisa estar logado para ver suas reviews.");
+                return;
+            }
+            q = query(collection(db, "reviews"), where("userId", "==", currentUser.uid));
+        } else {
+            q = query(collection(db, "reviews"), where("username", "==", user), where("isPublic", "==", true));
+        }
+
+        const querySnapshot = await getDocs(q);
         const reviews = [];
         querySnapshot.forEach((doc) => {
             reviews.push({ id: doc.id, ...doc.data() });
@@ -196,9 +210,10 @@ async function carregarReviewsUser() {
         alert("Erro ao carregar reviews do usuário.");
     } finally {
         esconderLoading();
-        reviewType.textContent = "Suas Reviews";
+        reviewType.textContent = user ? `Reviews de ${user}` : "Suas Reviews";
     }
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarReviewsPublicas();
