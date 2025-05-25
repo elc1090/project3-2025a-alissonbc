@@ -1,5 +1,5 @@
 import { db, auth, mostrarLoading, esconderLoading } from './firebase.js';
-import { collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore.js";
+import { collection, addDoc, deleteDoc, updateDoc, doc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore.js";
 
 const selectNota = document.getElementById("selectNota");
 for(let i = 0; i <= 10; i++) {
@@ -20,6 +20,8 @@ const reviewDetalhadaContainer = document.getElementById("reviewDetalhadaContain
 const userInfo = document.getElementById("userInfo");
 const reviewType = document.getElementById("reviewType");
 
+let reviewEditandoId = null;
+
 btnMostrarAddReview.addEventListener("click", () => {
     addReviewContainer.classList.remove("d-none");
 });
@@ -29,6 +31,11 @@ btnMostrarReviewPublicas.addEventListener("click", () => carregarReviewsPublicas
 
 btnCancelarAddReview.addEventListener("click", () => {
     addReviewContainer.classList.add("d-none");
+
+    // Limpar e resetar estado de edição
+    limparCamposFormulario();
+    reviewEditandoId = null;
+    btnSalvarReview.textContent = "Salvar";
 });
 
 btnFecharDetalhada.addEventListener("click", () => {
@@ -51,6 +58,16 @@ reviewDetalhadaContainer.addEventListener("click", function (event) {
 });
 
 btnSalvarReview.addEventListener("click", async () => {
+    if (reviewEditandoId) {
+        // Se estiver editando, chama a função para editar
+        await editarReview();
+    } else {
+        // Se não, adiciona uma nova review
+        await salvarNovaReview();
+    }
+});
+
+async function salvarNovaReview() {
     const titulo = document.getElementById("inputTitulo").value.trim();
     const linkImagem = document.getElementById("inputImagem").value.trim();
     const nota = selectNota.value;
@@ -90,22 +107,75 @@ btnSalvarReview.addEventListener("click", async () => {
         }
         addReviewContainer.classList.add("d-none");
 
-        // limpando os campos
-        document.getElementById("inputTitulo").value = "";
-        document.getElementById("inputImagem").value = "";
-        selectNota.value = "";
-        document.getElementById("textareaReview").value = "";
-        document.getElementById("visibilidadePrivado").checked = true;
+        limparCamposFormulario();
 
-        if (isPublic) {
-            carregarReviewsPublicas();
-        }
+        carregarReviewsPublicas();
         
     } catch (e) {
         console.error("Erro ao salvar review:", e);
         alert("Erro ao salvar review. Veja o console.");
     }
-});
+}
+
+async function editarReview() {
+    const titulo = document.getElementById("inputTitulo").value.trim();
+    const linkImagem = document.getElementById("inputImagem").value.trim();
+    const nota = selectNota.value;
+    const textoDaReview = document.getElementById("textareaReview").value.trim();
+    const isPublic = document.getElementById("visibilidadePublico").checked;
+
+    if (!titulo || !nota || !textoDaReview) {
+        alert("Preencha pelo menos título, nota e review.");
+        return;
+    }
+
+    try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            alert("Você precisa estar logado para editar uma review.");
+            return;
+        }
+
+        mostrarLoading();
+        try {
+            const reviewRef = doc(db, "reviews", reviewEditandoId);
+            await updateDoc(reviewRef, {
+                title: titulo,
+                image: linkImagem,
+                rating: Number(nota),
+                review: textoDaReview,
+                isPublic: isPublic,
+                // Não altera userId, username ou createdAt
+                updatedAt: serverTimestamp()
+            });
+            alert("Review atualizada!");
+        } catch (e) {
+            console.error("Erro ao atualizar:", e);
+            alert("Erro ao atualizar. Veja o console.");
+        } finally {
+            esconderLoading();
+        }
+
+        addReviewContainer.classList.add("d-none");
+        limparCamposFormulario();
+
+        carregarReviewsPublicas();
+
+    } catch (e) {
+        console.error("Erro ao editar review:", e);
+        alert("Erro ao editar review. Veja o console.");
+    } finally {
+        reviewEditandoId = null; // Limpa o ID de edição
+    }
+}
+
+function limparCamposFormulario() {
+    document.getElementById("inputTitulo").value = "";
+    document.getElementById("inputImagem").value = "";
+    selectNota.value = "";
+    document.getElementById("textareaReview").value = "";
+    document.getElementById("visibilidadePrivado").checked = true;
+}
 
 // Exibe as reviews
 function exibirReviews(reviews) {
@@ -156,7 +226,60 @@ function abrirReviewDetalhada(review) {
         reviewDetalhadaAutorData.textContent = `Publicado por Desconhecido em ${dataFormatada}`;
     }
 
+    const btnDeletar = document.getElementById("btnDeletarReview");
+    const btnEditar = document.getElementById("btnEditarReview");
+
+    // Mostrar botão de deletar se for o autor da review
+    if (auth.currentUser && review.userId === auth.currentUser.uid) {
+        btnDeletar.classList.remove("invisible");
+        btnEditar.classList.remove("invisible");
+
+        // Definir listener do botão
+        btnDeletar.onclick = async () => {
+            if (!confirm("Tem certeza que deseja deletar esta review?")) return;
+
+            try {
+                await deleteDoc(doc(db, "reviews", review.id));
+                reviewDetalhadaContainer.classList.add("d-none");
+                carregarReviewsPublicas();
+            } catch (e) {
+                console.error("Erro ao deletar review:", e);
+                alert("Erro ao deletar review.");
+            }
+        };
+
+        btnEditar.onclick = () => editar(review);
+    } else {
+        btnDeletar.classList.add("invisible");
+        btnEditar.classList.add("invisible");
+    }
+
     reviewDetalhadaContainer.classList.remove("d-none");
+}
+
+function editar(review) {
+    // Guardar o id da review que será editada
+    reviewEditandoId = review.id;
+
+    // Preencher campos do formulário
+    document.getElementById("inputTitulo").value = review.title;
+    document.getElementById("inputImagem").value = review.image || "";
+    selectNota.value = review.rating;
+    document.getElementById("textareaReview").value = review.review;
+    if (review.isPublic) {
+        document.getElementById("visibilidadePublico").checked = true;
+    } else {
+        document.getElementById("visibilidadePrivado").checked = true;
+    }
+
+    // Mostrar o formulário
+    addReviewContainer.classList.remove("d-none");
+
+    // Fechar a review detalhada
+    reviewDetalhadaContainer.classList.add("d-none");
+
+    // Mudar texto do botão salvar para "Atualizar"
+    btnSalvarReview.textContent = "Atualizar";
 }
 
 async function carregarReviewsPublicas() {
